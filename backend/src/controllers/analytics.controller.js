@@ -65,4 +65,22 @@ const patchAnalytics = async (req, res) => {
   res.json(result.rows[0]);
 };
 
+const deleteAnalytics = async (req, res) => {
+  const { id } = req.params;
 
+  await pool.query(
+    "DELETE FROM analytics_events WHERE id = $1",
+    [id]
+  );
+
+  res.json({
+    message: "Analytics deleted successfully"
+  });
+};
+
+module.exports={
+    getAnalytics,
+    postAnalytics,
+    patchAnalytics,
+    deleteAnalytics
+};

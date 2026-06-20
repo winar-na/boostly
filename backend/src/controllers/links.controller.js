@@ -34,9 +34,6 @@ const createLink = async (req, res) => {
   res.status(201).json(result.rows[0]);
 };
 
-/*
-UPDATE LINK (PATCH)
-*/
 const updateLink = async (req, res) => {
   const { id } = req.params;
 
@@ -62,9 +59,6 @@ const updateLink = async (req, res) => {
   res.json(result.rows[0]);
 };
 
-/*
-DELETE LINK
-*/
 const deleteLink = async (req, res) => {
   const { id } = req.params;
 
