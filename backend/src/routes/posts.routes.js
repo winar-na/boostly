@@ -12,8 +12,8 @@ const {
 } = require("../controllers/posts.controller");
 
 router.get("/", verifyToken, getPosts);
-router.post("/", createPost);
-router.patch("/:id", updatePost);
-router.delete("/:id", deletePost);
+router.post("/", verifyToken, createPost);
+router.patch("/:id", verifyToken,  updatePost);
+router.delete("/:id", verifyToken,  deletePost);
 
 module.exports = router;

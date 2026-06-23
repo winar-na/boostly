@@ -1,0 +1,22 @@
+const express = require("express");
+
+const router = express.Router();
+
+const verifyToken = require("../middleware/auth.middleware");
+
+const {
+  getSubscriptions,
+  createSubscription,
+  updateSubscription,
+  deleteSubscription
+} = require("../controllers/subscriptions.controller");
+
+router.get("/", verifyToken, getSubscriptions);
+
+router.post("/", verifyToken, createSubscription);
+
+router.patch("/:id", verifyToken, updateSubscription);
+
+router.delete("/:id", verifyToken, deleteSubscription);
+
+module.exports = router;
