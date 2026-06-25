@@ -13,7 +13,12 @@ const {
 
 router.get("/", verifyToken, getSubscriptions);
 
-router.post("/", verifyToken, createSubscription);
+router.post(
+  "/",
+  verifyToken,
+  allowRoles("admin"),
+  createSubscription
+);
 
 router.patch("/:id", verifyToken, updateSubscription);
 

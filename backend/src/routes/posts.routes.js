@@ -3,6 +3,8 @@ const express = require("express");
 const router = express.Router();
 
 const verifyToken = require("../middleware/auth.middleware");
+const allowRoles = require("../middleware/roles.middleware");
+
 
 const {
   getPosts,
@@ -12,7 +14,12 @@ const {
 } = require("../controllers/posts.controller");
 
 router.get("/", verifyToken, getPosts);
-router.post("/", verifyToken, createPost);
+router.post(
+  "/",
+  verifyToken,
+  allowRoles("creator", "admin"),
+  createPost
+);
 router.patch("/:id", verifyToken,  updatePost);
 router.delete("/:id", verifyToken,  deletePost);
 

@@ -22,6 +22,10 @@ router.get("/:id", verifyToken, getUserById);
 
 router.patch("/:id", verifyToken, updateUser);
 
-router.delete("/:id" ,verifyToken, deleteUser);
-
+router.delete(
+  "/:id",
+  verifyToken,
+  allowRoles("admin"),
+  deleteUser
+);
 module.exports = router;

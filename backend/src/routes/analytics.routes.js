@@ -11,7 +11,12 @@ const {
   deleteAnalytics
 } = require("../controllers/analytics.controller");
 
-router.get("/", verifyToken, getAnalytics);
+router.get(
+  "/",
+  verifyToken,
+  allowRoles("admin", "creator"),
+  getAnalytics
+);
 
 router.post("/", verifyToken, createAnalytics);
 
