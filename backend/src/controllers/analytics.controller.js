@@ -1,6 +1,6 @@
 const pool = require("../database/db");
 
-const getAnalytics = async (req, res) => {
+const getAnalytics = async (req, res, next) => {
   try {
     const result = await pool.query(
       "SELECT * FROM analytics_events"
@@ -9,13 +9,11 @@ const getAnalytics = async (req, res) => {
     res.status(200).json(result.rows);
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
-const createAnalytics = async (req, res) => {
+const createAnalytics = async (req, res, next) => {
   try {
     const {
       user_id,
@@ -54,13 +52,11 @@ const createAnalytics = async (req, res) => {
     res.status(201).json(result.rows[0]);
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
-const updateAnalytics = async (req, res) => {
+const updateAnalytics = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -92,13 +88,11 @@ const updateAnalytics = async (req, res) => {
     res.status(200).json(result.rows[0]);
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
-const deleteAnalytics = async (req, res) => {
+const deleteAnalytics = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -112,9 +106,7 @@ const deleteAnalytics = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 

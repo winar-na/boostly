@@ -2,7 +2,7 @@ const pool = require("../database/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const {
       username,
@@ -32,13 +32,11 @@ const registerUser = async (req, res) => {
     res.status(201).json(result.rows[0]);
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
   try {
     const {
       email,
@@ -87,9 +85,7 @@ const loginUser = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 

@@ -7,11 +7,14 @@ const authRoutes = require("./routes/auth.routes");
 const subscriptionsRoutes = require("./routes/subscriptions.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
 
+const errorHandler = require("./middleware/error.middleware");
+
 const app = express();
 
 app.use(express.json());
+app.use(errorHandler);
 
-app.get("/", (req, res) => {
+app.get("/", (req, res, next) => {
   res.send("Welcome to Boostly API");
 });
 

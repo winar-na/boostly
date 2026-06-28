@@ -6,7 +6,16 @@ const {
   loginUser
 } = require("../controllers/auth.controller");
 
-router.post("/register", registerUser);
+const {
+  validateRegister
+} = require("../middleware/validate.middleware");
+
+
+router.post(
+  "/register",
+  validateRegister,
+  registerUser
+);
 
 router.post("/login", loginUser);
 

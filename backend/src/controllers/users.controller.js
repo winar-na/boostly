@@ -1,6 +1,6 @@
 const pool = require("../database/db");
 
-async function getUsers(req, res) {
+async function getUsers(req, res, next) {
   try {
     const result = await pool.query(
       "SELECT * FROM users ORDER BY id"
@@ -9,17 +9,12 @@ async function getUsers(req, res) {
     res.json(result.rows);
 
   } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      message: "Server Error"
-    });
+    next(error);
   }
 }
 
-async function createUser(req, res) {
+async function createUser(req, res, next) {
   try {
-
     const {
       username,
       full_name,
@@ -38,53 +33,61 @@ async function createUser(req, res) {
     res.status(201).json(result.rows[0]);
 
   } catch (error) {
-
-    console.error(error);
-
-    res.status(500).json({
-      message: "Server Error"
-    });
-
+    next(error);
   }
 }
 
+const getUserById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-const getUserById = async (req, res) => {
-  const { id } = req.params;
+    const result = await pool.query(
+      "SELECT * FROM users WHERE id = $1",
+      [id]
+    );
 
-  const result = await pool.query(
-    "SELECT * FROM users WHERE id = $1",
-    [id]
-  );
+    res.json(result.rows[0]);
 
-  res.json(result.rows[0]);
-}
+  } catch (error) {
+    next(error);
+  }
+};
 
-const updateUser = async (req, res) => {
-  const { id } = req.params;
-  const { plan } = req.body;
+const updateUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { plan } = req.body;
 
-  const result = await pool.query(
-    "UPDATE users SET plan = $1 WHERE id = $2 RETURNING *",
-    [plan, id]
-  );
+    const result = await pool.query(
+      "UPDATE users SET plan = $1 WHERE id = $2 RETURNING *",
+      [plan, id]
+    );
 
-  res.json(result.rows[0]);
-}
+    res.json(result.rows[0]);
 
-const deleteUser = async (req, res) => {
-  const { id } = req.params;
+  } catch (error) {
+    next(error);
+  }
+};
 
-  const result = await pool.query(
-    "DELETE FROM users WHERE id = $1 RETURNING *",
-    [id]
-  );
+const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
 
-  res.json({
-    message: "User deleted successfully",
-    deletedUser: result.rows[0]
-  });
-}
+    const result = await pool.query(
+      "DELETE FROM users WHERE id = $1 RETURNING *",
+      [id]
+    );
+
+    res.json({
+      message: "User deleted successfully",
+      deletedUser: result.rows[0]
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};
 
 module.exports = {
   getUsers,

@@ -1,6 +1,6 @@
 const pool = require("../database/db");
 
-const getSubscriptions = async (req, res) => {
+const getSubscriptions = async (req, res, next) => {
   try {
     const result = await pool.query(
       "SELECT * FROM subscriptions"
@@ -9,13 +9,11 @@ const getSubscriptions = async (req, res) => {
     res.status(200).json(result.rows);
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
-const createSubscription = async (req, res) => {
+const createSubscription = async (req, res, next) => {
   try {
     const {
       user_id,
@@ -48,13 +46,11 @@ const createSubscription = async (req, res) => {
     res.status(201).json(result.rows[0]);
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
-const updateSubscription = async (req, res) => {
+const updateSubscription = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -86,13 +82,11 @@ const updateSubscription = async (req, res) => {
     res.status(200).json(result.rows[0]);
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
-const deleteSubscription = async (req, res) => {
+const deleteSubscription = async (req, res, next) => {
   try {
     const { id } = req.params;
 
@@ -106,9 +100,7 @@ const deleteSubscription = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({
-      message: error.message
-    });
+    next(error);
   }
 };
 
