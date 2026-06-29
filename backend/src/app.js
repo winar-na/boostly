@@ -12,7 +12,6 @@ const errorHandler = require("./middleware/error.middleware");
 const app = express();
 
 app.use(express.json());
-app.use(errorHandler);
 
 app.get("/", (req, res, next) => {
   res.send("Welcome to Boostly API");
@@ -24,5 +23,8 @@ app.use("/api/links", linksRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/subscriptions", subscriptionsRoutes);
 app.use("/api/analytics" , analyticsRoutes);
+
+app.use(errorHandler);
+
 
 module.exports = app;
