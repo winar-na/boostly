@@ -2,6 +2,9 @@ const pool = require("../database/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
+/*
+REGISTER USER
+*/
 const registerUser = async (req, res, next) => {
   try {
     const {
@@ -36,6 +39,9 @@ const registerUser = async (req, res, next) => {
   }
 };
 
+/*
+LOGIN USER
+*/
 const loginUser = async (req, res, next) => {
   try {
     const {
@@ -67,7 +73,8 @@ const loginUser = async (req, res, next) => {
       });
     }
 
-    const token = jwt.sign(
+    // ACCESS TOKEN
+    const accessToken = jwt.sign(
       {
         id: user.id,
         email: user.email,
@@ -75,14 +82,74 @@ const loginUser = async (req, res, next) => {
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "1d"
+        expiresIn: "15m"
+      }
+    );
+
+    // REFRESH TOKEN
+    const refreshToken = jwt.sign(
+      {
+        id: user.id
+      },
+      process.env.JWT_REFRESH_SECRET,
+      {
+        expiresIn: "7d"
       }
     );
 
     res.status(200).json({
       message: "Login successful",
-      token
+      accessToken,
+      refreshToken
     });
+
+  } catch (error) {
+    next(error);
+  }
+};
+
+/*
+REFRESH ACCESS TOKEN
+*/
+const refreshAccessToken = async (
+  req,
+  res,
+  next
+) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken) {
+      return res.status(401).json({
+        message: "Refresh token required"
+      });
+    }
+
+    jwt.verify(
+      refreshToken,
+      process.env.JWT_REFRESH_SECRET,
+      (error, decoded) => {
+        if (error) {
+          return res.status(403).json({
+            message: "Invalid refresh token"
+          });
+        }
+
+        const newAccessToken = jwt.sign(
+          {
+            id: decoded.id
+          },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "15m"
+          }
+        );
+
+        res.status(200).json({
+          accessToken: newAccessToken
+        });
+      }
+    );
 
   } catch (error) {
     next(error);
@@ -91,5 +158,6 @@ const loginUser = async (req, res, next) => {
 
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  refreshAccessToken
 };

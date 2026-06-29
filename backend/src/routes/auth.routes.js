@@ -23,4 +23,6 @@ router.post(
   loginUser
 );
 
+router.post("/refresh", refreshAccessToken);
+
 module.exports = router;
