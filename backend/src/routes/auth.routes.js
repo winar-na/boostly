@@ -7,9 +7,9 @@ const {
 } = require("../controllers/auth.controller");
 
 const {
-  validateRegister
+  validateRegister,
+  validateLogin
 } = require("../middleware/validate.middleware");
-
 
 router.post(
   "/register",
@@ -17,6 +17,10 @@ router.post(
   registerUser
 );
 
-router.post("/login", loginUser);
+router.post(
+  "/login",
+  validateLogin,
+  loginUser
+);
 
 module.exports = router;
