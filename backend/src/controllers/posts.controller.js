@@ -1,5 +1,4 @@
 const pool = require("../database/db");
-
 const getPosts = async (req, res, next) => {
   try {
     const page =
@@ -11,11 +10,54 @@ const getPosts = async (req, res, next) => {
     const offset =
       (page - 1) * limit;
 
+    const {
+      status,
+      platform,
+      search
+    } = req.query;
+
+    let query = `
+      SELECT * FROM posts
+      WHERE user_id = $1
+    `;
+
+    let values = [req.user.id];
+    let count = 2;
+
+    if (status) {
+      query += ` AND status = $${count}`;
+      values.push(status);
+      count++;
+    }
+
+    if (platform) {
+      query += ` AND $${count} = ANY(platforms)`;
+      values.push(platform);
+      count++;
+    }
+
+    if (search) {
+      query += `
+        AND (
+          topic ILIKE $${count}
+          OR content ILIKE $${count}
+        )
+      `;
+      values.push(`%${search}%`);
+      count++;
+    }
+
+    query += `
+      ORDER BY id DESC
+      LIMIT $${count}
+      OFFSET $${count + 1}
+    `;
+
+    values.push(limit, offset);
+
     const result = await pool.query(
-      `SELECT * FROM posts
-       ORDER BY id DESC
-       LIMIT $1 OFFSET $2`,
-      [limit, offset]
+      query,
+      values
     );
 
     res.status(200).json({
