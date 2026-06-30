@@ -9,7 +9,12 @@ const authRoutes = require("./routes/auth.routes");
 const subscriptionsRoutes = require("./routes/subscriptions.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
 
+const limiter = require(
+  "./middleware/rateLimit.middleware"
+);
+
 const errorHandler = require("./middleware/error.middleware");
+
 
 const app = express();
 
@@ -32,9 +37,13 @@ BODY PARSER
 */
 app.use(express.json());
 
+app.use(limiter);
+
 app.get("/", (req, res) => {
   res.send("Welcome to Boostly API");
 });
+
+
 
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
