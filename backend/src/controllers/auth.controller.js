@@ -2,9 +2,6 @@ const pool = require("../database/db");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-/*
-REGISTER USER
-*/
 const registerUser = async (req, res, next) => {
   try {
     const {
@@ -39,9 +36,6 @@ const registerUser = async (req, res, next) => {
   }
 };
 
-/*
-LOGIN USER
-*/
 const loginUser = async (req, res, next) => {
   try {
     const {
@@ -62,7 +56,6 @@ const loginUser = async (req, res, next) => {
       });
     }
 
-    // ACCOUNT SUSPENSION CHECK
     if (!user.is_active) {
       return res.status(403).json({
         message: "Account suspended"
@@ -102,7 +95,6 @@ const loginUser = async (req, res, next) => {
       }
     );
 
-    // STORE REFRESH TOKEN
     await pool.query(
       "UPDATE users SET refresh_token = $1 WHERE id = $2",
       [refreshToken, user.id]
