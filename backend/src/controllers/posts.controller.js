@@ -2,11 +2,28 @@ const pool = require("../database/db");
 
 const getPosts = async (req, res, next) => {
   try {
+    const page =
+      parseInt(req.query.page) || 1;
+
+    const limit =
+      parseInt(req.query.limit) || 10;
+
+    const offset =
+      (page - 1) * limit;
+
     const result = await pool.query(
-      "SELECT * FROM posts"
+      `SELECT * FROM posts
+       ORDER BY id DESC
+       LIMIT $1 OFFSET $2`,
+      [limit, offset]
     );
 
-    res.json(result.rows);
+    res.status(200).json({
+      page,
+      limit,
+      total: result.rows.length,
+      posts: result.rows
+    });
 
   } catch (error) {
     next(error);
