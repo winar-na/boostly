@@ -197,13 +197,13 @@ backend/
 Clone the repository.
 
 ```bash
-git clone https://github.com/yourusername/boostly-backend.git
+git clone https://github.com/winar-na/boostly.git
 ```
 
 Move into the project.
 
 ```bash
-cd boostly-backend
+cd boostly
 ```
 
 Install dependencies.
