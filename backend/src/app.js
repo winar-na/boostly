@@ -9,12 +9,8 @@ const authRoutes = require("./routes/auth.routes");
 const subscriptionsRoutes = require("./routes/subscriptions.routes");
 const analyticsRoutes = require("./routes/analytics.routes");
 
-const limiter = require(
-  "./middleware/rateLimit.middleware"
-);
-
+const limiter = require("./middleware/rateLimit.middleware");
 const errorHandler = require("./middleware/error.middleware");
-
 
 const app = express();
 
@@ -24,27 +20,38 @@ SECURITY HEADERS
 app.use(helmet());
 
 /*
-CROSS ORIGIN ACCESS
+ALLOW REQUESTS FROM FRONTEND
 */
 app.use(
   cors({
-    origin: "*"
+    origin: process.env.CLIENT_URL
   })
 );
 
 /*
-BODY PARSER
+PARSE JSON REQUEST BODY
 */
 app.use(express.json());
 
+/*
+RATE LIMITING
+*/
 app.use(limiter);
 
+/*
+HEALTH CHECK
+*/
 app.get("/", (req, res) => {
-  res.send("Welcome to Boostly API");
+  res.json({
+    message: "Welcome to Boostly API",
+    version: "1.0.0",
+    status: "running"
+  });
 });
 
-
-
+/*
+API ROUTES
+*/
 app.use("/api/users", usersRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/links", linksRoutes);

@@ -9,58 +9,73 @@ const verifyToken = async (
   const authHeader =
     req.headers.authorization;
 
-  if (!authHeader) {
+  /*
+  CHECK AUTHORIZATION HEADER
+  */
+  if (
+    !authHeader ||
+    !authHeader.startsWith("Bearer ")
+  ) {
     return res.status(401).json({
       message:
-        "Access denied. No token provided."
+        "Invalid authorization header"
     });
   }
 
   const token = authHeader.split(" ")[1];
 
   try {
-    // VERIFY JWT
+    /*
+    VERIFY ACCESS TOKEN
+    */
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET
     );
 
-    // CHECK USER IN DATABASE
+    /*
+    FETCH ONLY REQUIRED USER DATA
+    */
     const result = await pool.query(
-      "SELECT * FROM users WHERE id = $1",
+      `SELECT
+        id,
+        email,
+        roles,
+        is_active
+       FROM users
+       WHERE id = $1`,
       [decoded.id]
     );
 
     const user = result.rows[0];
 
-    // USER DOES NOT EXIST
+    /*
+    USER NOT FOUND
+    */
     if (!user) {
       return res.status(404).json({
         message: "User not found"
       });
     }
 
-    // USER SUSPENDED
+    /*
+    ACCOUNT DISABLED
+    */
     if (!user.is_active) {
       return res.status(403).json({
         message: "Account suspended"
       });
     }
 
-    // ATTACH LIVE USER DATA
-    req.user = {
-      id: user.id,
-      email: user.email,
-      roles: user.roles
-    };
+    /*
+    ATTACH USER TO REQUEST
+    */
+    req.user = user;
 
     next();
 
   } catch (error) {
-    res.status(403).json({
-      message:
-        "Invalid or expired token"
-    });
+    next(error);
   }
 };
 

@@ -1,7 +1,7 @@
 {
   "name": "boostly-backend",
   "version": "1.0.0",
-  "description": "Backend API for Boostly MVP",
+  "description": "RESTful API powering the Boostly SaaS platform",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -11,7 +11,11 @@
   "keywords": [
     "boostly",
     "saas",
-    "content-creation"
+    "express",
+    "postgresql",
+    "jwt",
+    "rest-api",
+    "backend"
   ],
   "author": "Winnie",
   "license": "ISC",
