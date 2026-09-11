@@ -11,7 +11,6 @@ const getLinks = async (req, res, next) => {
        ORDER BY pl.id ASC`,
       [req.user.id]
     );
-
     res.json(result.rows);
 
   } catch (error) {
