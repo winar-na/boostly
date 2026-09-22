@@ -6,11 +6,13 @@ const verifyToken = require("../middleware/auth.middleware");
 
 const {
   getLinks,
+  redirectLink,
   createLink,
   updateLink,
   deleteLink
 } = require("../controllers/links.controller");
 
+router.get("/r/:slug", redirectLink);
 router.get("/", verifyToken, getLinks);
 router.post("/", verifyToken, createLink);
 router.patch("/:id", verifyToken, updateLink);

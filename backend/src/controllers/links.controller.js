@@ -18,6 +18,34 @@ const getLinks = async (req, res, next) => {
   }
 };
 
+const redirectLink = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+
+    const result = await pool.query(
+      `UPDATE promotion_links
+       SET click_count = click_count + 1
+       WHERE slug = $1
+       AND is_active = TRUE
+       RETURNING destination_url`,
+      [slug]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        message: "Promotion link not found or inactive"
+      });
+    }
+
+    const destinationUrl = result.rows[0].destination_url;
+
+    res.redirect(destinationUrl);
+
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createLink = async (req, res, next) => {
   try {
     const {
@@ -135,6 +163,7 @@ const deleteLink = async (req, res, next) => {
 
 module.exports = {
   getLinks,
+  redirectLink,
   createLink,
   updateLink,
   deleteLink
