@@ -17,8 +17,7 @@ const verifyToken = async (
     !authHeader.startsWith("Bearer ")
   ) {
     return res.status(401).json({
-      message:
-        "Invalid authorization header"
+      message: "Invalid authorization header"
     });
   }
 
@@ -75,6 +74,28 @@ const verifyToken = async (
     next();
 
   } catch (error) {
+
+    /*
+    ACCESS TOKEN EXPIRED
+    */
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).json({
+        message: "Access token expired"
+      });
+    }
+
+    /*
+    INVALID ACCESS TOKEN
+    */
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({
+        message: "Invalid access token"
+      });
+    }
+
+    /*
+    OTHER ERRORS
+    */
     next(error);
   }
 };
